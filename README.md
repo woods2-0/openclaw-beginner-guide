@@ -7,7 +7,7 @@
 > **How long will this take?** About 45-60 minutes total.
 >
 > ```
-> Part 1: Prerequisites (30 min, do on your own)  --->  Parts 2-6: Setup (30 min, on call)  --->  Done!
+> Part 1: Prerequisites (do on your own)  --->  Parts 2-6: Install & Configure (on call)  --->  Done!
 > ```
 >
 > **Cost?** $0. Everything in this guide is free.
@@ -256,28 +256,126 @@ source ~/.bashrc
 
 > **What if nothing happens?** That command shows no output when it succeeds. No news is good news!
 
-### Step 2.3: Run the Onboarding Wizard
+---
+
+## Part 3: The Onboarding Wizard (The Big One)
+
+This is the most important part. The onboarding wizard asks you a bunch of questions to set up your agent. **Read this whole section before you start** so nothing surprises you.
+
+### Step 3.1: Start the Wizard
 
 ```bash
 openclaw onboard --install-daemon
 ```
 
-The wizard walks you through setup. Here's exactly what to answer:
+The `--install-daemon` part makes your agent auto-start in the background (so it keeps running even if you close the terminal). Now follow each prompt carefully:
 
-1. **"What model provider would you like to use?"**
-   - Use **arrow keys** to highlight **Groq**, then press **Enter**
-   - (If it asks you to type instead, type `groq` and press Enter)
+---
 
-2. **"Enter your API key"**
-   - Paste your Groq API key (from `my-keys.txt` — the one starting with `gsk_`)
+### Step 3.2: QuickStart vs Advanced
 
-3. **"What model?"**
-   - Choose **llama-3.3-70b-versatile** (the biggest number = the smartest agent)
-   - If that's not listed, pick the largest "Llama" model you see
+**The wizard will ask:** "Choose onboarding mode" (or similar)
 
-4. **Any other questions** (agent name, workspace path, etc.) — just press **Enter** to accept the defaults. You might get 2-3 of these. Enter on all of them is fine.
+**Choose: QuickStart**
 
-### Step 2.4: Verify OpenClaw is Running
+QuickStart picks sensible defaults for you and asks fewer questions. Advanced mode gives you control over every little detail, which you don't need right now. You can always change settings later.
+
+> If you don't see this choice, that's fine — some versions skip it and go straight to the next question.
+
+---
+
+### Step 3.3: Choose Your AI Provider
+
+**The wizard will ask:** "Which AI provider would you like to use?"
+
+You'll see a list of options like Anthropic, OpenAI, Google Gemini, OpenRouter, Ollama, Groq, etc.
+
+**Choose: Groq** (use arrow keys to highlight it, then press Enter)
+
+---
+
+### Step 3.4: Enter Your API Key
+
+**The wizard will ask:** "Enter your Groq API key"
+
+**Paste your Groq API key** — the one starting with `gsk_` that you saved in `my-keys.txt`. (Right-click or Ctrl+Shift+V to paste.)
+
+---
+
+### Step 3.5: Choose Your Model
+
+**The wizard will ask:** "Select default model"
+
+**Choose: llama-3.3-70b-versatile** (or the largest "Llama" model you see)
+
+The bigger the number, the smarter the agent. `70b` means 70 billion parameters — that's a very capable AI brain, and it's free on Groq.
+
+---
+
+### Step 3.6: Gateway Configuration
+
+**The wizard might ask** about gateway settings (port number, binding address, authentication).
+
+**What to do: Press Enter on everything to accept the defaults.**
+
+- Port: **18789** (default — just press Enter)
+- Bind address: **Loopback/Local** (default — just press Enter)
+- Authentication: **Token** (default — it auto-generates one for you)
+
+> You don't need to understand these settings right now. The defaults are correct for running on your laptop.
+
+---
+
+### Step 3.7: Pick a Channel ⚠️ (THIS IS WHERE PEOPLE GET STUCK)
+
+**The wizard will ask:** "Would you like to set up any messaging channels?" or show you a list of channels like Telegram, WhatsApp, Discord, etc.
+
+**A "channel" is how you TALK to your agent from outside the terminal** — like connecting it to your Telegram or WhatsApp so you can message your agent from your phone.
+
+**What to do RIGHT NOW: Skip this step.**
+
+- If it asks yes/no → choose **No** or **Skip**
+- If it shows a list → look for **Skip**, **None**, or just press **Enter** without selecting anything
+- If you can't figure out how to skip → choose **Telegram** (it's the easiest) and we'll set it up
+
+> **Why skip?** You do NOT need a channel to use your agent. Your agent has a built-in dashboard (a website on your computer) where you can chat with it directly. We can add Telegram/Discord later for phone access — it's a 5-minute step you can do anytime.
+>
+> **If you accidentally chose a channel** and now it's asking for a "bot token" or credentials you don't have — press **Ctrl+C** to cancel, then run the wizard again:
+> ```bash
+> openclaw onboard --install-daemon
+> ```
+
+---
+
+### Step 3.8: Web Search (Optional)
+
+**The wizard might ask:** "Would you like to configure web search for your agent?"
+
+**What to do: Skip it.** Choose No/Skip or press Enter. Your agent doesn't need web search to play Molty Royale. You can add it later if you want.
+
+---
+
+### Step 3.9: Skills Installation (Optional)
+
+**The wizard might ask:** "Install recommended skills?" and show a list of add-ons.
+
+**What to do: Skip it or accept the defaults.** We're going to install the Moltbook skill manually in the next section, which is the one that actually matters for gaming.
+
+---
+
+### Step 3.10: Daemon Installation
+
+**The wizard might ask:** "Install gateway as background service?"
+
+**Choose: Yes**
+
+This makes your agent start automatically when your computer boots up, and keeps it running in the background. This is what the `--install-daemon` flag was for, so it might handle this automatically without asking.
+
+---
+
+### Step 3.11: Verify Everything Worked
+
+Once the wizard finishes, run:
 
 ```bash
 openclaw gateway status
@@ -285,33 +383,70 @@ openclaw gateway status
 
 **What success looks like:**
 ```
-Gateway is running
+Runtime: running
 ```
 
-If it says "not running," start it:
+If it says "not running" or "stopped," start it manually:
 ```bash
 openclaw gateway start
 ```
 
-> **Checkpoint:** If the gateway is running, OpenClaw is alive! Parts 2 is done.
+Then check again:
+```bash
+openclaw gateway status
+```
+
+You can also run a deeper health check:
+```bash
+openclaw doctor --deep
+```
+
+> **Checkpoint:** If the gateway is running, OpenClaw is alive! The hardest part is done.
 
 ---
 
-## Part 3: Give Your Agent a Personality
+## Part 4: Meet Your Agent (The Bootstrap Ritual)
 
-Every agent needs a personality, defined in a file called `SOUL.md` — like creating a character in a video game.
+When OpenClaw creates a brand-new agent, it puts a special file called `BOOTSTRAP.md` in your workspace. This is a one-time setup ritual where your agent introduces itself and you customize its personality together.
 
-### Step 3.1: Open the SOUL.md File
+### Step 4.1: Open the Dashboard
 
 ```bash
-nano ~/.openclaw/SOUL.md
+openclaw dashboard
 ```
 
-> `nano` is a simple text editor in the terminal. `~` is shorthand for your home folder — don't change the path, just copy-paste the command exactly. If the file is empty or doesn't exist yet, that's fine — nano will create it.
+This opens a webpage in your browser where you can chat with your agent.
 
-### Step 3.2: Write Your Agent's Personality
+> **Windows/WSL users:** If nothing opens, open your browser manually and go to **http://localhost:18789**
 
-If there's existing text, hold **Backspace** to delete it, or press **Ctrl+K** repeatedly to delete one line at a time. Then paste this (right-click or Ctrl+Shift+V). **Don't worry if the formatting looks a little off — it will still work:**
+### Step 4.2: Start the Bootstrap
+
+In the **dashboard chat box**, type:
+
+```
+Hey! Let's get you set up. Read BOOTSTRAP.md and walk me through it.
+```
+
+Your agent will respond and guide you through:
+- **Choosing a name** for your agent (pick something fun!)
+- **Setting its personality** (competitive gamer? chill strategist? aggressive tactician?)
+- **Filling in your info** (timezone, what you want the agent to do)
+
+Just answer its questions naturally — this is the fun part where you create your agent's character.
+
+> **If the agent doesn't mention BOOTSTRAP.md** or seems confused, that's okay. You can set up the personality manually — see Step 4.3.
+
+### Step 4.3: Manual Personality Setup (Backup Option)
+
+If the bootstrap didn't work, you can edit the personality file directly:
+
+```bash
+nano ~/.openclaw/workspace/SOUL.md
+```
+
+> **Note:** The file might be at `~/.openclaw/SOUL.md` OR `~/.openclaw/workspace/SOUL.md` depending on your version. Try both — one of them will have content or be creatable.
+
+If there's existing text, press **Ctrl+K** repeatedly to delete one line at a time. Then paste this (right-click or Ctrl+Shift+V):
 
 ```markdown
 # Agent Identity
@@ -336,25 +471,23 @@ I make smart decisions quickly and adapt to changing situations.
 - Use clear, direct language
 ```
 
-### Step 3.3: Save and Exit
+Save with **Ctrl+X**, then **Y**, then **Enter**.
 
-1. Press **Ctrl+X** (exit)
-2. It asks "Save modified buffer?" — press **Y**
-3. Press **Enter** to confirm the filename
+> **Checkpoint:** You've met your agent and given it a personality!
 
 ---
 
-## Part 4: Install the Moltbook Skill + Heartbeat
+## Part 5: Install the Moltbook Skill (Teach Your Agent to Game)
 
 The Moltbook "skill" teaches your agent how to connect to Moltbook and play games like Molty Royale. The "heartbeat" keeps it actively checking in so the game knows your agent is still playing.
 
-### Step 4.1: Create the Skill Folder
+### Step 5.1: Create the Skill Folder
 
 ```bash
 mkdir -p ~/.openclaw/skills/moltbook
 ```
 
-### Step 4.2: Download the Skill Files
+### Step 5.2: Download the Skill Files
 
 Paste all 5 lines at once — your terminal will run them one by one automatically:
 
@@ -375,7 +508,7 @@ wc -l ~/.openclaw/skills/moltbook/*.md
 
 **What success looks like:** Each file should show more than 0 lines. If any shows 0, that download failed — run that specific `curl` command again.
 
-### Step 4.3: Set Up Your Moltbook Credentials
+### Step 5.3: Set Up Your Moltbook Credentials
 
 > **We'll do this step together on the call** if you didn't find your Moltbook API key in Step 1.4. The exact command may look like:
 > ```bash
@@ -383,7 +516,7 @@ wc -l ~/.openclaw/skills/moltbook/*.md
 > ```
 > Replace `abc123your_actual_key_here` with YOUR actual key. Do NOT type the words literally — put your real key there.
 
-### Step 4.4: Set Up the Heartbeat
+### Step 5.4: Set Up the Heartbeat
 
 This makes your agent check in with Moltbook every 30 minutes automatically (like an anti-AFK ping):
 
@@ -400,7 +533,7 @@ openclaw cron list
 
 You should see `moltbook-heartbeat` listed.
 
-### Step 4.5: Verify Everything
+### Step 5.5: Verify Everything
 
 ```bash
 ls ~/.openclaw/skills/moltbook/
@@ -408,31 +541,31 @@ ls ~/.openclaw/skills/moltbook/
 
 **What success looks like:** 5 files listed — `SKILL.md`, `HEARTBEAT.md`, `MESSAGING.md`, `RULES.md`, `package.json`.
 
-> **Checkpoint:** Skill installed, heartbeat configured. Part 4 is done!
+> **Checkpoint:** Skill installed, heartbeat configured. Part 5 is done!
 
 ---
 
-## Part 5: Launch Your Agent!
+## Part 6: Launch and Test!
 
 Everything is installed. Time to bring your agent to life.
 
-### Step 5.1: Start the Gateway
+### Step 6.1: Start the Gateway (If Not Already Running)
 
 ```bash
 openclaw gateway start
 ```
 
-### Step 5.2: Open the Dashboard
+### Step 6.2: Open the Dashboard
+
+If you didn't already have the dashboard open from Part 4:
 
 ```bash
 openclaw dashboard
 ```
 
-This should open a webpage in your browser where you can see your agent's status, chat with it, and monitor activity.
+> **Windows/WSL users:** If nothing opens in your browser, open your browser manually and go to **http://localhost:18789**
 
-> **Windows/WSL users:** If nothing opens in your browser, open your browser manually and go to **http://localhost:18789** (a "port" is just an address number your agent uses — like a specific door into your computer).
-
-### Step 5.3: Test Your Agent
+### Step 6.3: Test Your Agent
 
 In the **dashboard chat box**, type:
 
@@ -442,7 +575,7 @@ Hey! Can you check Moltbook and tell me what's going on?
 
 If your agent responds and tries to interact with Moltbook — you're live!
 
-### Step 5.4: Join Molty Royale
+### Step 6.4: Join Molty Royale
 
 Type in the dashboard chat:
 
@@ -456,7 +589,7 @@ Your agent will use its Moltbook skill to find and join upcoming games.
 
 ---
 
-## Part 6: Keeping Things Running
+## Part 7: Keeping Things Running
 
 ### Your Laptop Needs to Stay On
 
@@ -495,7 +628,7 @@ If your computer restarts (updates, power outage, etc.), your agent won't auto-s
 
 ---
 
-## Part 7: Running From Your Phone
+## Part 8: Running From Your Phone
 
 **You can *talk to* your agent from your phone, but you should *run* it from your laptop.**
 
@@ -518,7 +651,7 @@ Your phone's battery, data, and processing power aren't designed for an always-o
 
 ---
 
-## Part 8: Troubleshooting
+## Part 9: Troubleshooting
 
 ### "command not found: openclaw"
 
